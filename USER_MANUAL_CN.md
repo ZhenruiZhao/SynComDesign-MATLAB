@@ -39,9 +39,8 @@ SynComDesign/
   scripts/
     runSynComDesign.m
     GetAllCombination.m
-    src/
-  docs/
-    USER_MANUAL_CN.md
+    src/  
+  USER_MANUAL_CN.md
 ```
 
 各文件夹含义：
@@ -50,28 +49,28 @@ SynComDesign/
 - `media/`：放培养基文件。
 - `config/`：放主配置文件和映射表。
 - `scripts/`：放 MATLAB 程序。
-- `docs/`：放使用说明。
+- `USER_MANUAL_CN.md`：中文使用说明。
 
 ## 3. 需要安装的软件
 
 运行 SynComDesign 需要：
 
 1. MATLAB。
-2. COBRA Toolbox。
+2. COBRA Toolbox。参考"https://opencobra.github.io/cobratoolbox/stable/installation.html".
 3. 一个 LP 求解器，例如 Gurobi 或 GLPK。
 
-推荐使用 Gurobi。GLPK 也可以尝试，但在某些模型上可能更容易出现数值问题。
+推荐使用 Gurobi。
 
 ## 4. 第一次运行
 
 打开 MATLAB，进入项目目录：
 
 ```matlab
-cd('D:\path\to\SynComDesign')
+cd('path\to\SynComDesign')
 addpath(genpath(pwd))
 ```
 
-把 `D:\path\to\SynComDesign` 换成你自己电脑上的实际路径。
+把 `path\to\SynComDesign` 换成你自己电脑上的实际路径。
 
 初始化 COBRA Toolbox 和求解器：
 
@@ -147,12 +146,6 @@ project:
 
 ```yaml
 output_dir: results_ID1_growth
-```
-
-或：
-
-```yaml
-output_dir: results_ID2_E10
 ```
 
 每次换一个 `output_dir`，结果就会保存到不同文件夹。
@@ -463,9 +456,7 @@ results/failed_combinations.tsv
 8. 查看 `community_summary.tsv`。
 9. 查看 `failed_combinations.tsv`。
 
-## 15. 上传 GitHub 前提醒
-
-如果模型文件不能公开，请不要上传 `models/` 中的真实模型。
+## 15. 引用
 
 当前项目参考并修改了原 SuperCC 工作流。公开发布前，请保留原论文和 GitHub 仓库引用，并确认相关代码、模型和第三方依赖的许可要求。
 
