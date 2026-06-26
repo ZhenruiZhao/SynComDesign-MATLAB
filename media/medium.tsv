@@ -1,43 +1,43 @@
-﻿metabolite	exchange_rxn	lower_bound	upper_bound	description
-no3	R_EX_no3_e	-1000	1000	# Nitrate (KNO3 0.72 g/L → ~0.0071 M NO3-)
-k	R_EX_k_e	-1000	1000	# K+（KNO3 贡献；另有磷酸盐母液也供 K+）
-cl	R_EX_cl_e	-1000	1000	# Cl-（NaCl 相同摩尔量）
-mg2	R_EX_mg2_e	-1000	1000	# Mg2+（MgSO4·7H2O 0.5 g/L → ~0.0020 M Mg2+）
-so4	R_EX_so4_e	-1000	1000	# SO4(2-)（与 Mg2+ 等摩尔；另可能来自 NiSO4 等微量盐）
-sucr	R_EX_sucr_e	-1000	1000	# Sucrose（2.0 g/L → ~0.0058 M）
-pi	R_EX_pi_e	-1000	1000	# Phosphate（K2HPO4 0.5 g/L + KH2PO4 0.5 g/L 合计 ~0.0065 M 无机磷，近似值）
-glu__L	R_EX_glu__L_e	-1000	1000	# L-Glutamate（占位值）
-asp__L	R_EX_asp__L_e	-1000	1000	# L-Aspartate（占位值）
-lys__L	R_EX_lys__L_e	-1000	1000	# L-Lysine（占位值）
-ala__L	R_EX_ala__L_e	-1000	1000	# L-Alanine（占位值）
-ile__L	R_EX_ile__L_e	-1000	1000	# L-Isoleucine（占位值）
-val__L	R_EX_val__L_e	-1000	1000	# L-Valine（占位值）
-leu__L	R_EX_leu__L_e	-1000	1000	# L-Leucine（占位值）
-gly	R_EX_gly_e	-1000	1000	# Glycine（占位值）
-ser__L	R_EX_ser__L_e	-1000	1000	# L-Serine（占位值）
-thr__L	R_EX_thr__L_e	-1000	1000	# L-Threonine（占位值）
-pro__L	R_EX_pro__L_e	-1000	1000	# L-Proline（占位值）
-phe__L	R_EX_phe__L_e	-1000	1000	# L-Phenylalanine（占位值）
-his__L	R_EX_his__L_e	-1000	1000	# L-Histidine（占位值）
-tyr__L	R_EX_tyr__L_e	-1000	1000	# L-Tyrosine（占位值）
-arg__L	R_EX_arg__L_e	-1000	1000	# L-Arginine（占位值）
-met__L	R_EX_met__L_e	-1000	1000	# L-Methionine（占位值）
-cys__L	R_EX_cys__L_e	-1000	1000	# L-Cysteine（占位值）
-orn	R_EX_orn_e	-1000	1000	# L-Ornithine（占位值）
-thm	R_EX_thm_e	-1000	1000	# Thiamin (B1)（占位值）
-ribflv	R_EX_ribflv_e	-1000	1000	# Riboflavin (B2)（占位值）
-pnto__R	R_EX_pnto__R_e	-1000	1000	# Pantothenate (B5)（占位值）
-pydxn	R_EX_pydxn_e	-1000	1000	# Pyridoxine (B6)（占位值）
-nac	R_EX_nac_e	-1000	1000	# Nicotinic acid (B3)（占位值）
-btn	R_EX_btn_e	-1000	1000	# Biotin (B7)（占位值）
-fe2	R_EX_fe2_e	-1000	1000	# Fe2+（占位值）
-mn2	R_EX_mn2_e	-1000	1000	# Mn2+（占位值）
-cobalt2	R_EX_cobalt2_e	-1000	1000	# Co2+（占位值）
-zn2	R_EX_zn2_e	-1000	1000	# Zn2+（占位值）
-cu2	R_EX_cu2_e	-1000	1000	# Cu2+（占位值）
-slnt	R_EX_slnt_e	-1000	1000	# Selenite（占位值）
-mobd	R_EX_mobd_e	-1000	1000	# Tungstate（占位值）
-h2o	R_EX_h2o_e	-1000	1000	water auto-added for COBRA exchange balance
-h	R_EX_h_e	-1000	1000	proton auto-added for COBRA exchange balance
-co2	R_EX_co2_e	0	1000	carbon dioxide secretion only
-o2	R_EX_o2_e	0	1000	oxygen closed for anaerobic condition
+"metabolite	exchange_rxn	lower_bound	upper_bound	description"
+"no3	R_EX_no3_e	-1000	1000	# Nitrate "
+"k	R_EX_k_e	-1000	1000	# K+"
+"cl	R_EX_cl_e	-1000	1000	# Cl-"
+"mg2	R_EX_mg2_e	-1000	1000	# Mg2+"
+"so4	R_EX_so4_e	-1000	1000	# SO4"
+"sucr	R_EX_sucr_e	-1000	1000	# Sucrose"
+"pi	R_EX_pi_e	-1000	1000	# Phosphate"
+"glu__L	R_EX_glu__L_e	-1000	1000	# L-Glutamate"
+"asp__L	R_EX_asp__L_e	-1000	1000	# L-Aspartate"
+"lys__L	R_EX_lys__L_e	-1000	1000	# L-Lysine"
+"ala__L	R_EX_ala__L_e	-1000	1000	# L-Alanine"
+"ile__L	R_EX_ile__L_e	-1000	1000	# L-Isoleucine"
+"val__L	R_EX_val__L_e	-1000	1000	# L-Valine"
+"leu__L	R_EX_leu__L_e	-1000	1000	# L-Leucine"
+"gly	R_EX_gly_e	-1000	1000	# Glycine"
+"ser__L	R_EX_ser__L_e	-1000	1000	# L-Serine"
+"thr__L	R_EX_thr__L_e	-1000	1000	# L-Threonine"
+"pro__L	R_EX_pro__L_e	-1000	1000	# L-Proline"
+"phe__L	R_EX_phe__L_e	-1000	1000	# L-Phenylalanine"
+"his__L	R_EX_his__L_e	-1000	1000	# L-Histidine"
+"tyr__L	R_EX_tyr__L_e	-1000	1000	# L-Tyrosine"
+"arg__L	R_EX_arg__L_e	-1000	1000	# L-Arginine"
+"met__L	R_EX_met__L_e	-1000	1000	# L-Methionine"
+"cys__L	R_EX_cys__L_e	-1000	1000	# L-Cysteine"
+"orn	R_EX_orn_e	-1000	1000	# L-Ornithine"
+"thm	R_EX_thm_e	-1000	1000	# Thiamin "
+"ribflv	R_EX_ribflv_e	-1000	1000	# Riboflavin "
+"pnto__R	R_EX_pnto__R_e	-1000	1000	# Pantothenate "
+"pydxn	R_EX_pydxn_e	-1000	1000	# Pyridoxine "
+"nac	R_EX_nac_e	-1000	1000	# Nicotinic acid "
+"btn	R_EX_btn_e	-1000	1000	# Biotin "
+"fe2	R_EX_fe2_e	-1000	1000	# Fe2+"
+"mn2	R_EX_mn2_e	-1000	1000	# Mn2+"
+"cobalt2	R_EX_cobalt2_e	-1000	1000	# Co2+"
+"zn2	R_EX_zn2_e	-1000	1000	# Zn2+"
+"cu2	R_EX_cu2_e	-1000	1000	# Cu2+"
+"slnt	R_EX_slnt_e	-1000	1000	# Selenite"
+"mobd	R_EX_mobd_e	-1000	1000	# Tungstate"
+"h2o	R_EX_h2o_e	-1000	1000	water auto-added for COBRA exchange balance"
+"h	R_EX_h_e	-1000	1000	proton auto-added for COBRA exchange balance"
+"co2	R_EX_co2_e	0	1000	carbon dioxide secretion only"
+"o2	R_EX_o2_e	0	1000	oxygen closed for anaerobic condition"
