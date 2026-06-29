@@ -7,8 +7,8 @@
 if nargin < 3
     aliasTable = table();
 end
-targets = {'nitrate','nitrite','nitric_oxide','nitrous_oxide','dinitrogen','ammonium','oxygen'};
-canonical = {'no3','no2','no','n2o','n2','nh4','o2'};
+targets = {'nitrate','nitrite','nitric_oxide','nitrous_oxide','dinitrogen','ammonium','oxygen','carbon_dioxide'};
+canonical = {'no3','no2','no','n2o','n2','nh4','o2','co2'};
 for i = 1:numel(targets)
     aliases = aliasesForTarget(aliasTable, canonical{i}, targets{i});
     rxn = findMetaboliteExchange(model, aliases);

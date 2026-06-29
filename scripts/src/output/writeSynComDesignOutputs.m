@@ -7,6 +7,7 @@ writeIfPresent(outputs, 'flux_ranges', outputDir);
 writeIfPresent(outputs, 'model_validation', outputDir);
 writeIfPresent(outputs, 'reaction_mapping', outputDir);
 writeIfPresent(outputs, 'metabolite_mapping', outputDir);
+writeIfPresent(outputs, 'community_medium_requirements', outputDir);
 writeIfPresent(outputs, 'failed_combinations', outputDir);
 end
 

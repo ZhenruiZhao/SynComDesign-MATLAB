@@ -13,6 +13,8 @@ nh4	nh4_e	ammonium
 nh4	EX_nh4_e	ammonium
 o2	o2_e	oxygen
 o2	EX_o2_e	oxygen
+co2	co2_e	carbon_dioxide
+co2	EX_co2_e	carbon_dioxide
 ac	ac_e	acetate
 ac	EX_ac_e	acetate
 succ	succ_e	succinate

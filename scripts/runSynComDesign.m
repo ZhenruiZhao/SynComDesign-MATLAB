@@ -69,6 +69,7 @@ singleRows = table();
 failedRows = table();
 reactionMap = table();
 metaboliteMap = table();
+mediumRequirementRows = table();
 
 for i = 1:numel(combinations)
     combo = combinations{i};
@@ -82,9 +83,11 @@ for i = 1:numel(combinations)
         mediumOptions.shared_environment_compartment = config.community.shared_environment_compartment;
         if strcmpi(string(config.medium.community_medium_mode), "legacy_all_exchange")
             [community, ~] = applyMedium(community, resolvePath(rootDir, config.medium.file), config.medium);
+            mediumMapping = table();
         else
-            [community, ~] = applyCommunityExternalMedium(community, resolvePath(rootDir, config.medium.file), mediumOptions);
+            [community, ~, ~, mediumMapping] = applyCommunityExternalMedium(community, resolvePath(rootDir, config.medium.file), mediumOptions);
         end
+        mediumRequirementRows = appendTable(mediumRequirementRows, makeCommunityMediumRequirementRows(comboId, community, mediumMapping));
         community = setCommunityObjective(community, config.objective);
         if any(strcmpi(string(config.objective.type), ["fixed_composition","equal_composition"]))
             ratios = [];
@@ -128,6 +131,7 @@ outputs.flux_ranges = table();
 outputs.model_validation = validationTable;
 outputs.reaction_mapping = unique(reactionMap, 'rows');
 outputs.metabolite_mapping = unique(metaboliteMap, 'rows');
+outputs.community_medium_requirements = mediumRequirementRows;
 outputs.failed_combinations = failedRows;
 writeSynComDesignOutputs(outputDir, outputs);
 
@@ -177,6 +181,43 @@ if strcmpi(string(objectiveConfig.type), "growth_then_n2o_consumption")
 else
     sol = solveModelOrFallback(model);
 end
+end
+
+function rows = makeCommunityMediumRequirementRows(comboId, community, mediumMapping)
+if ~isfield(community, 'syncomdesign') || ~isfield(community.syncomdesign, 'externalExchangeMap')
+    rows = table();
+    return;
+end
+externalMap = community.syncomdesign.externalExchangeMap;
+n = height(externalMap);
+combinationId = repmat(string(comboId), n, 1);
+sharedMet = string(externalMap.shared_metabolite);
+externalRxn = string(externalMap.external_exchange_rxn);
+minimumFlux = zeros(n, 1);
+appliedLb = nan(n, 1);
+appliedUb = nan(n, 1);
+listed = false(n, 1);
+mediumRxn = strings(n, 1);
+mediumMet = strings(n, 1);
+
+for i = 1:n
+    rxnIdx = find(strcmp(community.rxns, char(externalRxn(i))), 1);
+    if ~isempty(rxnIdx)
+        appliedLb(i) = community.lb(rxnIdx);
+        appliedUb(i) = community.ub(rxnIdx);
+    end
+    if ~isempty(mediumMapping) && all(ismember({'shared_external_exchange','found'}, mediumMapping.Properties.VariableNames))
+        mapIdx = find(strcmp(string(mediumMapping.shared_external_exchange), externalRxn(i)) & mediumMapping.found, 1);
+        if ~isempty(mapIdx)
+            listed(i) = true;
+            mediumRxn(i) = string(mediumMapping.medium_exchange_rxn(mapIdx));
+            mediumMet(i) = string(mediumMapping.medium_metabolite(mapIdx));
+        end
+    end
+end
+
+rows = table(combinationId, sharedMet, externalRxn, minimumFlux, appliedLb, appliedUb, listed, mediumRxn, mediumMet, ...
+    'VariableNames', {'combination_id','shared_metabolite','external_exchange_rxn','minimum_flux','applied_lower_bound','applied_upper_bound','listed_in_medium_file','medium_exchange_rxn','medium_metabolite'});
 end
 
 function sol = solveGrowthThenN2OUptake(model, objectiveConfig, aliasTable)
