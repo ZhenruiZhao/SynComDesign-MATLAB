@@ -6,6 +6,8 @@
 
 SynComDesign 是一个用于合成微生物群落设计和功能评价的 MATLAB 工具。它可以读取多个菌株的基因组尺度代谢模型，自动枚举菌株组合，构建共享环境群落模型，并预测生长和反硝化相关通量。
 
+本版本包含 community medium 修复：在群落 FBA 中，培养基只作用于外部共享交换反应 `R_EX_*_u`，不会直接修改菌株-共享池 interface reaction、内部 transport reaction 或 metabolic reaction。菌株之间仍然可以通过质量守恒的 shared extracellular pool 发生 cross-feeding。
+
 当前版本支持：
 
 - CarveMe 生成的 COBRA/SBML 模型。
@@ -36,11 +38,15 @@ SynComDesign/
     005.xml
     016.xml
     020.xml
+    E10.xml
+    ER45.xml
   scripts/
     runSynComDesign.m
     GetAllCombination.m
     src/  
   USER_MANUAL_CN.md
+  MEDIUM_MODELING_PRINCIPLE.md
+  VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md
 ```
 
 各文件夹含义：
@@ -50,6 +56,8 @@ SynComDesign/
 - `config/`：放主配置文件和映射表。
 - `scripts/`：放 MATLAB 程序。
 - `USER_MANUAL_CN.md`：中文使用说明。
+- `MEDIUM_MODELING_PRINCIPLE.md`：培养基和 cross-feeding 原则说明。
+- `VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md`：本修复版的验证摘要。
 
 ## 3. 需要安装的软件
 
@@ -122,10 +130,16 @@ medium:
   file: media/medium.tsv
   condition: anaerobic
   close_unlisted_uptakes: true
+  community_medium_mode: external_shared_only
+  close_unlisted_external_medium_uptakes: true
+  allow_cross_feeding: true
+  close_strain_interface_uptakes: false
+  close_internal_transport: false
+  legacy_close_unlisted_uptakes: false
 
 objective:
   scenario_id: 1
-  growth_fraction: 0.9
+  growth_fraction: 1
   target_strain: null
   biomass_weights: equal
 
@@ -241,6 +255,16 @@ EX_no3_e	-10	1000
 ```
 
 表示允许硝酸盐摄取，最大摄取速率为 10。
+
+在群落模式中，默认使用 `external_shared_only` 原则：
+
+- 培养基条目映射到外部共享交换反应，例如 `R_EX_no3_u`。
+- 培养基文件中列出的外部共享交换按文件中的 lower bound 和 upper bound 设置。
+- 培养基文件中没有列出的外部共享交换会关闭外界摄取，即 lower bound 设为 0。
+- 菌株-共享池 interface reaction 不由培养基直接修改，因此 A 菌分泌到 shared pool 后，B 菌仍可通过 interface 摄取。
+- 内部 transport reaction 和 metabolic reaction 不由培养基直接修改。
+
+代码中，群落 FBA 使用 `applyCommunityExternalMedium`，单菌验证使用 `applySingleModelMedium`。
 
 如果你想测试新培养基，建议不要覆盖原文件，而是复制一份：
 

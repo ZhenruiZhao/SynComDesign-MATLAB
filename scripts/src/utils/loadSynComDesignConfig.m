@@ -115,6 +115,12 @@ config = ensureSection(config, 'medium');
 config.medium = defaultField(config.medium, 'file', fullfile('config', 'medium.tsv'));
 config.medium = defaultField(config.medium, 'condition', 'anaerobic');
 config.medium = defaultField(config.medium, 'close_unlisted_uptakes', true);
+config.medium = defaultField(config.medium, 'community_medium_mode', 'external_shared_only');
+config.medium = defaultField(config.medium, 'close_unlisted_external_medium_uptakes', true);
+config.medium = defaultField(config.medium, 'allow_cross_feeding', true);
+config.medium = defaultField(config.medium, 'close_strain_interface_uptakes', false);
+config.medium = defaultField(config.medium, 'close_internal_transport', false);
+config.medium = defaultField(config.medium, 'legacy_close_unlisted_uptakes', false);
 
 config = ensureSection(config, 'community');
 config.community = defaultField(config.community, 'require_all_species_active', true);

@@ -78,7 +78,13 @@ for i = 1:numel(combinations)
     timer = tic;
     try
         community = buildCommunityModel(comboModels, config);
-        [community, ~] = applyMedium(community, resolvePath(rootDir, config.medium.file), config.medium);
+        mediumOptions = config.medium;
+        mediumOptions.shared_environment_compartment = config.community.shared_environment_compartment;
+        if strcmpi(string(config.medium.community_medium_mode), "legacy_all_exchange")
+            [community, ~] = applyMedium(community, resolvePath(rootDir, config.medium.file), config.medium);
+        else
+            [community, ~] = applyCommunityExternalMedium(community, resolvePath(rootDir, config.medium.file), mediumOptions);
+        end
         community = setCommunityObjective(community, config.objective);
         if any(strcmpi(string(config.objective.type), ["fixed_composition","equal_composition"]))
             ratios = [];

@@ -11,7 +11,7 @@ end
 if isfield(model, 'syncomdesign') && isfield(model.syncomdesign, 'biomassMap') && isfield(solution, 'x')
     for i = 1:height(model.syncomdesign.biomassMap)
         idx = find(strcmp(model.rxns, char(model.syncomdesign.biomassMap.biomass_rxn(i))), 1);
-        if ~isempty(idx)
+        if ~isempty(idx) && idx <= numel(solution.x)
             strainBiomass(i) = solution.x(idx);
         end
     end

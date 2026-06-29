@@ -44,7 +44,7 @@ growth = NaN;
 solverStatus = 'not_run';
 if ~isempty(biomass.biomassRxn) && exist('optimizeCbModel', 'file') == 2
     try
-        testModel = applyMedium(model, config.medium.file, config.medium);
+        testModel = applySingleModelMedium(model, config.medium.file, config.medium);
         testModel.c(:) = 0;
         rxnIdx = find(strcmp(testModel.rxns, biomass.biomassRxn), 1);
         testModel.c(rxnIdx) = 1;

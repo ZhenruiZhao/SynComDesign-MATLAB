@@ -2,9 +2,9 @@
 %BUILDCOMMUNITYMODEL Build a prefixed shared-environment community model.
 %
 %   community = buildCommunityModel(modelInfos, config) combines the selected
-%   strain models without using any strain as a base model. Intracellular IDs
-%   are strain-prefixed; exchange metabolites are mapped to a shared
-%   environment compartment.
+%   strain models without using any strain as a base model. Strain exchange
+%   reactions connect strain extracellular metabolites to a shared environment,
+%   and explicit shared external exchanges are added for medium control.
 
 if isempty(modelInfos)
     error('buildCommunityModel:NoModels', 'At least one model is required.');
@@ -60,9 +60,41 @@ community.syncomdesign.metaboliteMap = cell2table(metRows, 'VariableNames', ...
     {'community_met','strain','source_met','role'});
 community.syncomdesign.biomassMap = cell2table(biomassRows, 'VariableNames', ...
     {'strain','biomass_rxn'});
-community.syncomdesign.transportMap = community.syncomdesign.reactionMap(strcmp(community.syncomdesign.reactionMap.role, 'exchange'), :);
+community = addSharedExternalExchanges(community, sharedCompartment);
+community.syncomdesign.transportMap = community.syncomdesign.reactionMap(strcmp(community.syncomdesign.reactionMap.role, 'strain_shared_interface'), :);
 community = syncCobraConstraintFields(community);
 community = validateCommunityModel(community);
+end
+
+function community = addSharedExternalExchanges(community, sharedCompartment)
+sharedMets = community.mets(endsWith(community.mets, ['[' sharedCompartment ']']));
+sharedMets = unique(sharedMets, 'stable');
+rows = cell(numel(sharedMets), 4);
+for i = 1:numel(sharedMets)
+    sharedMet = sharedMets{i};
+    rxn = sharedExchangeRxnId(sharedMet, sharedCompartment);
+    if ~any(strcmp(community.rxns, rxn))
+        metIdx = find(strcmp(community.mets, sharedMet), 1);
+        community.S(:, end+1) = sparse(size(community.S, 1), 1);
+        community.S(metIdx, end) = -1;
+        community.rxns{end+1, 1} = rxn;
+        community.lb(end+1, 1) = -1000;
+        community.ub(end+1, 1) = 1000;
+        community.c(end+1, 1) = 0;
+    end
+    rows(i, :) = {rxn, 'external', rxn, 'external_medium_exchange'};
+end
+externalMap = cell2table(rows, 'VariableNames', {'community_rxn','strain','source_rxn','role'});
+community.syncomdesign.reactionMap = [community.syncomdesign.reactionMap; externalMap];
+community.syncomdesign.externalExchangeMap = table(sharedMets(:), externalMap.community_rxn(:), ...
+    'VariableNames', {'shared_metabolite','external_exchange_rxn'});
+community.syncomdesign.externalSharedExchangeRxns = externalMap.community_rxn(:);
+end
+
+function rxn = sharedExchangeRxnId(sharedMet, sharedCompartment)
+base = regexprep(char(sharedMet), ['\[' sharedCompartment '\]$'], '');
+base = regexprep(base, '[^A-Za-z0-9_]', '_');
+rxn = sprintf('R_EX_%s_%s', base, sharedCompartment);
 end
 
 function [allMets, Smerged] = mergeStoichiometry(Smerged, allMets, Spart, metsPart)

@@ -37,7 +37,8 @@ zn2	R_EX_zn2_e	-1000	1000	# Zn2+
 cu2	R_EX_cu2_e	-1000	1000	# Cu2+
 slnt	R_EX_slnt_e	-1000	1000	# Selenite
 mobd	R_EX_mobd_e	-1000	1000	# Tungstate
-h2o	R_EX_h2o_e	-1000	1000	water auto-added for COBRA exchange balance
-h	R_EX_h_e	-1000	1000	proton auto-added for COBRA exchange balance
-co2	R_EX_co2_e	0	1000	carbon dioxide secretion only
-o2	R_EX_o2_e	0	1000	oxygen closed for anaerobic condition
+h2o	R_EX_h2o_e	-1000	1000	#water auto-added for COBRA exchange balance
+h	R_EX_h_e	-1000	1000	#proton auto-added for COBRA exchange balance
+co2	R_EX_co2_e	0	1000	#carbon dioxide secretion only
+o2	R_EX_o2_e	0	1000	#oxygen closed for anaerobic condition
+n2o	R_EX_n2o_e	-1000	1000	#N2O

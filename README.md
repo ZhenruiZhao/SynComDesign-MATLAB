@@ -6,6 +6,8 @@ SynComDesign is a MATLAB-based workflow for designing and evaluating synthetic m
 
 This README is written as a beginner-friendly guide. You do not need prior experience with SynComDesign, but you do need MATLAB, COBRA Toolbox, and a linear programming solver.
 
+This package includes the community medium fix. In community FBA, the medium is applied only to external shared exchange reactions (`R_EX_*_u`). Strain-shared interface reactions, internal transport reactions, and metabolic reactions are not directly changed by the medium. Cross-feeding remains possible through the mass-balanced shared extracellular pool.
+
 ## 1. What SynComDesign Does
 
 SynComDesign can be used to answer questions such as:
@@ -25,7 +27,7 @@ Current capabilities include:
 - Total community biomass prediction.
 - Target-strain biomass optimization.
 - Equal-composition and fixed-composition community constraints.
-- Growth-first, N<sub>2</sub>O-consumption-second optimization.
+- Growth-first, N2O-consumption-second optimization.
 - Nitrate, nitrite, nitric oxide, nitrous oxide, and dinitrogen exchange reporting.
 - TSV and CSV output tables.
 
@@ -47,11 +49,15 @@ SynComDesign/
     005.xml
     016.xml
     020.xml
+    E10.xml
+    ER45.xml
   scripts/
     runSynComDesign.m
     GetAllCombination.m
     src/
-   USER_MANUAL_CN.md
+  USER_MANUAL_CN.md
+  MEDIUM_MODELING_PRINCIPLE.md
+  VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md
 ```
 
 Folder meanings:
@@ -60,14 +66,16 @@ Folder meanings:
 - `media/`: medium files.
 - `config/`: main configuration and mapping files.
 - `scripts/`: MATLAB entry point and source code.
-- `docs/`: additional documentation.
+- `USER_MANUAL_CN.md`: Chinese user manual.
+- `MEDIUM_MODELING_PRINCIPLE.md`: community medium and cross-feeding principle.
+- `VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md`: verification summary for this fixed version.
 
 ## 3. Software Requirements
 
 You need:
 
 1. MATLAB.
-2. COBRA Toolbox."https://opencobra.github.io/cobratoolbox/stable/installation.html"
+2. COBRA Toolbox.
 3. A COBRA-compatible LP solver, such as Gurobi or GLPK.
 
 Gurobi is recommended when available. GLPK can be used, but it may be less stable for some genome-scale models.
@@ -135,10 +143,16 @@ medium:
   file: media/medium.tsv
   condition: anaerobic
   close_unlisted_uptakes: true
+  community_medium_mode: external_shared_only
+  close_unlisted_external_medium_uptakes: true
+  allow_cross_feeding: true
+  close_strain_interface_uptakes: false
+  close_internal_transport: false
+  legacy_close_unlisted_uptakes: false
 
 objective:
   scenario_id: 1
-  growth_fraction: 0.9
+  growth_fraction: 1
   target_strain: null
   biomass_weights: equal
 
@@ -251,6 +265,16 @@ EX_no3_e	-10	1000
 
 This means nitrate uptake is allowed with a maximum uptake rate of 10.
 
+In community mode, the default behavior is `external_shared_only`:
+
+- The medium file is mapped to external shared exchange reactions such as `R_EX_no3_u`.
+- Medium entries listed in the file set the lower and upper bounds of those external shared exchanges.
+- External shared exchanges not listed in the medium file are closed for uptake by setting their lower bound to 0.
+- Strain-shared interface reactions are left unchanged, so one strain can secrete into the shared pool and another strain can consume from it.
+- Internal transport and metabolic reactions are left unchanged by the medium.
+
+This separation is implemented by `applyCommunityExternalMedium` for community FBA and `applySingleModelMedium` for single-strain validation.
+
 To test a new medium, copy the medium file instead of overwriting it:
 
 ```text
@@ -272,7 +296,7 @@ The metabolite alias file is:
 config/metabolite_aliases.tsv
 ```
 
-It tells SynComDesign which model IDs correspond to nitrate, nitrite, NO, N<sub>2</sub>O, and N<sub>2<sub>.
+It tells SynComDesign which model IDs correspond to nitrate, nitrite, NO, N2O, and N2.
 
 Example:
 
@@ -282,7 +306,7 @@ n2o	n2o_e	nitrous_oxide
 n2o	EX_n2o_e	nitrous_oxide
 ```
 
-If your model uses a different N<sub>2</sub>O exchange reaction or metabolite ID, add it to this table.
+If your model uses a different N2O exchange reaction or metabolite ID, add it to this table.
 
 This file should normally be kept. If it is removed, denitrification flux extraction may become incomplete or incorrect.
 
@@ -309,13 +333,13 @@ Use this mode to find the combination with the highest total predicted growth.
 ```yaml
 objective:
   scenario_id: 2
-  target_strain: 005
+  target_strain: E10
 ```
 
 Use this mode when you care about one specific strain. The target strain name must match the model file name. For `E10.xml`, use:
 
 ```yaml
-target_strain: 005
+target_strain: E10
 ```
 
 SynComDesign automatically evaluates only combinations that contain the target strain.
@@ -340,7 +364,7 @@ objective:
 
 This mode is used for fixed biomass-ratio constraints. If no custom ratio is provided, the current implementation falls back to equal ratios.
 
-### ID5: Growth-Then-N<sub>2</sub>O-Consumption
+### ID5: Growth-Then-N2O-Consumption
 
 ```yaml
 objective:
@@ -352,9 +376,9 @@ This mode runs a two-step optimization:
 
 1. Maximize total growth.
 2. Keep at least 90% of the maximum growth.
-3. Within that growth constraint, maximize N<sub>2</sub>O uptake.
+3. Within that growth constraint, maximize N2O uptake.
 
-If the models cannot consume N<sub>2</sub>O under the current medium, ID5 may give the same result as ID1.
+If the models cannot consume N2O under the current medium, ID5 may give the same result as ID1.
 
 ## 12. Output Files
 
@@ -399,7 +423,7 @@ Important columns:
 - `no_secretion`: nitric oxide secretion.
 - `n2o_uptake`: nitrous oxide uptake.
 - `n2o_secretion`: nitrous oxide secretion.
-- `n2o_net_flux`: raw N<sub>2</sub>O exchange direction.
+- `n2o_net_flux`: raw N2O exchange direction.
 - `n2_secretion`: dinitrogen secretion.
 
 ## 13. Flux Sign Convention
@@ -410,7 +434,7 @@ Output columns use positive biological rates:
 - Secretion is reported as `max(0, exchangeFlux)`.
 - Net flux keeps the raw COBRA exchange direction.
 
-For example, if the COBRA exchange flux through an N<sub>2</sub>O exchange reaction is `-3`, SynComDesign reports:
+For example, if the COBRA exchange flux through an N2O exchange reaction is `-3`, SynComDesign reports:
 
 ```text
 n2o_uptake = 3
@@ -458,14 +482,14 @@ Possible causes:
 
 Try ID1 first and check whether the target strain can grow alone.
 
-### 14.4 N<sub>2</sub>O Uptake Is Always Zero
+### 14.4 N2O Uptake Is Always Zero
 
 Possible causes:
 
-- The model has no N<sub>2</sub>O exchange reaction.
-- `metabolite_aliases.tsv` does not include the correct N<sub>2</sub>O ID.
-- The medium does not allow N<sub>2</sub>O uptake.
-- The model has no pathway for using N<sub>2</sub>O.
+- The model has no N2O exchange reaction.
+- `metabolite_aliases.tsv` does not include the correct N2O ID.
+- The medium does not allow N2O uptake.
+- The model has no pathway for using N2O.
 
 ## 15. Recommended Workflow
 
