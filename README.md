@@ -27,7 +27,7 @@ Current capabilities include:
 - Total community biomass prediction.
 - Target-strain biomass optimization.
 - Equal-composition and fixed-composition community constraints.
-- Growth-first, N<sub>2</sub>O-consumption-second optimization.
+- Growth-first, N2O-consumption-second optimization.
 - Nitrate, nitrite, nitric oxide, nitrous oxide, and dinitrogen exchange reporting.
 - TSV and CSV output tables.
 
@@ -57,6 +57,7 @@ SynComDesign/
     src/
   USER_MANUAL_CN.md
   MEDIUM_MODELING_PRINCIPLE.md
+  VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md
 ```
 
 Folder meanings:
@@ -295,7 +296,7 @@ The metabolite alias file is:
 config/metabolite_aliases.tsv
 ```
 
-It tells SynComDesign which model IDs correspond to nitrate, nitrite, NO, N<sub>2</sub>O, and N<sub>2</sub>.
+It tells SynComDesign which model IDs correspond to nitrate, nitrite, NO, N2O, and N2.
 
 Example:
 
@@ -305,7 +306,7 @@ n2o	n2o_e	nitrous_oxide
 n2o	EX_n2o_e	nitrous_oxide
 ```
 
-If your model uses a different N<sub>2</sub>O exchange reaction or metabolite ID, add it to this table.
+If your model uses a different N2O exchange reaction or metabolite ID, add it to this table.
 
 This file should normally be kept. If it is removed, denitrification flux extraction may become incomplete or incorrect.
 
@@ -363,7 +364,7 @@ objective:
 
 This mode is used for fixed biomass-ratio constraints. If no custom ratio is provided, the current implementation falls back to equal ratios.
 
-### ID5: Growth-Then-N<sub>2</sub>O-Consumption
+### ID5: Growth-Then-N2O-Consumption
 
 ```yaml
 objective:
@@ -375,9 +376,9 @@ This mode runs a two-step optimization:
 
 1. Maximize total growth.
 2. Keep at least 90% of the maximum growth.
-3. Within that growth constraint, maximize N<sub>2</sub>O uptake.
+3. Within that growth constraint, maximize N2O uptake.
 
-If the models cannot consume N<sub>2</sub>O under the current medium, ID5 may give the same result as ID1.
+If the models cannot consume N2O under the current medium, ID5 may give the same result as ID1.
 
 ## 12. Output Files
 
@@ -396,6 +397,7 @@ single_strain_results.tsv
 model_validation.tsv
 reaction_mapping.tsv
 metabolite_mapping.tsv
+community_medium_requirements.tsv
 failed_combinations.tsv
 run.log
 ```
@@ -422,8 +424,13 @@ Important columns:
 - `no_secretion`: nitric oxide secretion.
 - `n2o_uptake`: nitrous oxide uptake.
 - `n2o_secretion`: nitrous oxide secretion.
-- `n2o_net_flux`: raw N<sub>2</sub>O exchange direction.
+- `n2o_net_flux`: raw N2O exchange direction.
 - `n2_secretion`: dinitrogen secretion.
+- `co2_production`: carbon dioxide production.
+- `nh4_uptake`: ammonium uptake.
+- `nh4_secretion`: ammonium secretion.
+
+`community_medium_requirements.tsv` lists every external shared exchange available in each community model. The `minimum_flux` column is set to 0 for all entries, matching the old superCC-style candidate medium list, while `applied_lower_bound` and `applied_upper_bound` show the actual bounds used in FBA.
 
 ## 13. Flux Sign Convention
 
@@ -433,7 +440,7 @@ Output columns use positive biological rates:
 - Secretion is reported as `max(0, exchangeFlux)`.
 - Net flux keeps the raw COBRA exchange direction.
 
-For example, if the COBRA exchange flux through an N<sub>2</sub>O exchange reaction is `-3`, SynComDesign reports:
+For example, if the COBRA exchange flux through an N2O exchange reaction is `-3`, SynComDesign reports:
 
 ```text
 n2o_uptake = 3
@@ -481,14 +488,14 @@ Possible causes:
 
 Try ID1 first and check whether the target strain can grow alone.
 
-### 14.4 N<sub>2</sub>O Uptake Is Always Zero
+### 14.4 N2O Uptake Is Always Zero
 
 Possible causes:
 
-- The model has no N<sub>2</sub>O exchange reaction.
-- `metabolite_aliases.tsv` does not include the correct N<sub>2</sub>O ID.
-- The medium does not allow N<sub>2</sub>O uptake.
-- The model has no pathway for using N<sub>2</sub>O.
+- The model has no N2O exchange reaction.
+- `metabolite_aliases.tsv` does not include the correct N2O ID.
+- The medium does not allow N2O uptake.
+- The model has no pathway for using N2O.
 
 ## 15. Recommended Workflow
 
