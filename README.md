@@ -57,7 +57,6 @@ SynComDesign/
     src/
   USER_MANUAL_CN.md
   MEDIUM_MODELING_PRINCIPLE.md
-  VERIFY_COMMUNITY_MEDIUM_FIX_REPORT.md
 ```
 
 Folder meanings:
