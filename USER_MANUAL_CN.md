@@ -16,7 +16,7 @@ SynComDesign 是一个用于合成微生物群落设计和功能评价的 MATLAB
 - 群落总生物量预测。
 - 指定目标菌生物量预测。
 - 等比例或固定比例群落组成约束。
-- 生长优先再优化 N<sub>2</sub>O 消耗的二阶段目标。
+- 生长优先再优化 N2O 消耗的二阶段目标。
 - 硝酸盐、亚硝酸盐、一氧化氮、氧化亚氮和氮气交换通量输出。
 - TSV 和 CSV 格式结果表。
 
@@ -287,7 +287,7 @@ medium:
 config/metabolite_aliases.tsv
 ```
 
-它告诉程序哪些模型 ID 对应硝酸盐、亚硝酸盐、NO、N<sub>2</sub>O 和 N<sub>2</sub>。
+它告诉程序哪些模型 ID 对应硝酸盐、亚硝酸盐、NO、N2O 和 N2。
 
 示例：
 
@@ -297,7 +297,7 @@ n2o	n2o_e	nitrous_oxide
 n2o	EX_n2o_e	nitrous_oxide
 ```
 
-如果你的模型使用不同的 N<sub>2</sub>O 反应或代谢物 ID，需要把它加到这个表里。
+如果你的模型使用不同的 N2O 反应或代谢物 ID，需要把它加到这个表里。
 
 这个文件不建议删除。删除后程序可能无法正确识别反硝化通量。
 
@@ -351,7 +351,7 @@ objective:
 
 如果没有设置具体比例，当前程序会按默认等比例处理。
 
-### ID5：兼顾生长和 N<sub>2</sub>O 消耗
+### ID5：兼顾生长和 N2O 消耗
 
 ```yaml
 objective:
@@ -363,9 +363,9 @@ objective:
 
 1. 先最大化生长。
 2. 至少保留 90% 最大生长量。
-3. 在这个前提下尽量提高 N<sub>2</sub>O 摄取。
+3. 在这个前提下尽量提高 N2O 摄取。
 
-如果当前模型没有 N<sub>2</sub>O 摄取能力，ID5 的结果可能和 ID1 一样。
+如果当前模型没有 N2O 摄取能力，ID5 的结果可能和 ID1 一样。
 
 ## 12. 结果文件
 
@@ -384,6 +384,7 @@ single_strain_results.tsv
 model_validation.tsv
 reaction_mapping.tsv
 metabolite_mapping.tsv
+community_medium_requirements.tsv
 failed_combinations.tsv
 run.log
 ```
@@ -410,8 +411,13 @@ community_summary.tsv
 - `no_secretion`：一氧化氮分泌。
 - `n2o_uptake`：氧化亚氮摄取。
 - `n2o_secretion`：氧化亚氮分泌。
-- `n2o_net_flux`：N<sub>2</sub>O 净通量。
+- `n2o_net_flux`：N2O 净通量。
 - `n2_secretion`：氮气产生。
+- `co2_production`：二氧化碳产生。
+- `nh4_uptake`：铵摄取。
+- `nh4_secretion`：铵分泌。
+
+`community_medium_requirements.tsv` 会列出每个群落模型中所有可作为培养基候选的 external shared exchange。`minimum_flux` 固定为 0，对应旧版 superCC 的候选培养基列表；`applied_lower_bound` 和 `applied_upper_bound` 是实际用于 FBA 的边界。
 
 ## 13. 常见问题
 
@@ -457,14 +463,14 @@ results/failed_combinations.tsv
 
 建议先用 ID1 检查该菌单独是否能生长。
 
-### 13.4 N<sub>2</sub>O uptake 全是 0
+### 13.4 N2O uptake 全是 0
 
 可能原因：
 
-- 模型没有 N<sub>2</sub>O exchange reaction。
-- `metabolite_aliases.tsv` 没有写对 N<sub>2</sub>O ID。
-- 培养基没有允许 N<sub>2</sub>O 摄取。
-- 模型没有利用 N<sub>2</sub>O 的代谢路径。
+- 模型没有 N2O exchange reaction。
+- `metabolite_aliases.tsv` 没有写对 N2O ID。
+- 培养基没有允许 N2O 摄取。
+- 模型没有利用 N2O 的代谢路径。
 
 ## 14. 推荐使用流程
 
